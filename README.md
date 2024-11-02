@@ -19,7 +19,10 @@ It depends, but for our backend(for anything), it should have a relatively broad
 # How? 
 Slowly, at the moment, and always with **Go**.
 ## Architecture 
-![Archtecture as described](https://github.com/user-attachments/assets/487217cf-095b-4670-94ad-2dea9f772823)
+See .plan file in  each folder.
+
+## Whats Pipes
+The database for the whole thing
 
 ## Recommended Reading before Contribution
 *  [OOP Concepts in Go](https://dev.to/parthlaw/object-oriented-go-unraveling-the-power-of-oop-in-golang-49h6)

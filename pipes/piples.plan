@@ -1,0 +1,53 @@
+The Archives(Relational Database, ish, where speed is not the number on priority)
+-------
+
+Overview--
+Data split up into chunks of 100MB max segments
+There are up to 1000 segments per node by default
+Records of where data is stored in the chunks is kept in the core table,
+every node has the same core table, and the core table is replicated across all nodes
+Records can  be stored in multiple chunks for reliablilty, all that matters is that an account of it is taken in the
+core table(duplicate entry)
+
+How Data is Stored--
+
+Found this online, great reference
+1c  FS  ␜  ^\  File Separator
+1d  GS  ␝  ^]  Group Separator
+1e  RS  ␞  ^^  Record Separator
+1f  US  ␟  ^_  Unit Separator
+
+In terms of how the data is actually represented, this is a relational binary database(no json, xml or the like)
+
+Imagine you have a table with 3 columns like the below
+
+| id | fname | lname |
+|----|-------|-------|
+| 1  | John  | Doe   |
+| 2  | Jane  | Doe   |
+| 3  | John  | Smith |
+
+The first thing in the binary(represented in hex) would be the data ID, which is a randmly generated 64bit number
+
+Now the data, its simple, pretty much just binary csv since the data is relational.
+so for the above table, the binary would look like this
+<id> "1f" <fname> "1f" <lname>
+
+"1e" is the last byte to signify the record data is over
+
+After that happens, we check to see if the current chunk is over 100MB, if it is, we create a new chunk and put the data there
+
+after that, we write an entry to the core table that includes the chunk number, the data ID, and the offset of the data in the chunk so it can be found
+quickly if the data ID is known aready
+    - like if it was put in a session or something
+then the entry is broadcasted via a pipe to all other nodes
+
+How DB nodes are connected together--
+There is no central node, they are all connected together.
+When a new node is added to the network, it contacts the main orchistrator to get a list of other nodes to connect to.
+
+
+Pipes and Realtime Data--
+
+A pipe can be created between subscribers, all partys in a pipe can send realtime together between each other. Pipes cannot exist between
+DB nodes.
