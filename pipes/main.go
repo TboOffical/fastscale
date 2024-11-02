@@ -1,6 +1,6 @@
 package pipes
 
-import "orchestrator"
+import "github.com/TboOffical/fastscale/orchestrator"
 
 func main() {
 	node := orchestrator.PipesNode{
