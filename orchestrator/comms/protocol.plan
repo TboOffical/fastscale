@@ -1,0 +1,19 @@
+-- FSISP
+Fastscale Inter-Service Protocol (FSISP) is the protocol used by all fastscale services to communicate.
+Unlike other protocols like HTTPS, FSISP is an encrypted, continuous, binary protocol. Once a connection is established,
+the tunnel stays open and data can flow without a handshake for each message.
+
+  -- Connection
+  The first thing is the handshake. The client sends a public key to the server, and vise versa.
+  The types of encryption being used is CRYSTALS-Kyber.
+  The handshake takes place like this
+  1. The server sends FF, to indicate that is is ready to for a public key.
+  2. The client sends the public key. Then FF to indicate it is ready for the servers public key
+  3. The server sends the public key. Then FF to indicate the handshake is complete.
+  4. A test message is sent to the server, the server reponds with the hash of the message.
+  5. The server sends AF to indicate the connection is ready for data.
+
+
+-- Registering
+Registering is the process in which a node registers itself with an orchestrator so it can
+receive important information and be managed. This is done through the registration request.

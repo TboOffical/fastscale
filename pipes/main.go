@@ -1,9 +1,12 @@
 package main
 
-import (
-	"github.com/TboOffical/fastscale/pipes/comms"
-)
+import "github.com/TboOffical/fastscale/orchestrator/comms"
 
 func main() {
-	comms.Test()
+	conn := comms.NewConnection("192.168.1.5")
+	err := conn.Connect()
+	if err != nil {
+		panic(err)
+		return
+	}
 }

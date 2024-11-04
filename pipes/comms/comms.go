@@ -1,5 +1,0 @@
-package comms
-
-func Test() {
-
-}
