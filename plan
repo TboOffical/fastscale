@@ -1,0 +1,16 @@
+Node- Run's App
+
+Orchestrator- Holds the plan and information, manages the nodes
+    1) Manages database, keeps its up to date with the plan
+    2) Manages versioning of the plan
+
+Plans stored in /plans directory under root folder
+    Inside this directory there are subdirectories for each plan revision, at the
+    root of the directory there is a metadata file that contains basic information about all the plans
+    Plans are stored in JSON format with the extension .plan
+    A setup includes the schema of the application, along with any custom
+Setups are stored in /setups directory under root folder
+    Inside this directory there are subdirectories for each setup revision, at the
+    root of the directory there is a metadata file that contains basic information about all the setups
+    Setups are stored in JSON format with the extension .setup
+    A setup includes information about the infrastructure(like DB connection strings, etc)
