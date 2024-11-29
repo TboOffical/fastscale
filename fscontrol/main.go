@@ -12,6 +12,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"image/color"
+	"net"
 	"os"
 	"regexp"
 	"strings"
@@ -35,6 +36,7 @@ var (
 	snapshot        string
 	cursorChar      string = "|"
 	notes           binding.String
+	connection      net.Conn
 )
 
 func termPrint(s string) {
@@ -48,7 +50,14 @@ func termPrintLn(s string) {
 }
 
 func clearTerm() {
-	termContent.Set("\n\n\n\n Terminal Cleared\n")
+	termContent.Set("\n\n\n\nTerminal Cleared\n\n")
+}
+
+func execute(command string) {
+	_, err := connection.Write([]byte(command))
+	if err != nil {
+		return
+	}
 }
 
 func main() {
@@ -106,14 +115,47 @@ func main() {
 			if b != true || host == "" || connected {
 				return
 			}
-			connected = true
+
 			termPrintLn("Connecting to " + host + "...")
+
+			connection, err = net.Dial("tcp", host)
+			if err != nil {
+				termPrintLn(fmt.Sprint("Error in connection: ", err))
+				return
+			}
+
+			connected = true
 			clearTerm()
+
+			//todo handshake
 
 			keyboardEnabled = true
 			status.Set(host)
 			w.SetTitle("Fastscale Terminal - " + host)
 			a.SendNotification(fyne.NewNotification("Connected", "You are now connected to the host "+host))
+
+			go func() {
+				for {
+					received := make([]byte, 1024)
+					_, err = connection.Read(received)
+					if err != nil {
+						println("Read data failed:", err.Error())
+						os.Exit(1)
+					}
+
+					var clean []byte
+
+					//remove zeros
+					for _, by := range received {
+						if by != 0 {
+							clean = append(clean, by)
+						}
+					}
+
+					final := fmt.Sprint(string(clean))
+					termPrintLn(final)
+				}
+			}()
 		}, w)
 	})
 
@@ -173,6 +215,7 @@ func main() {
 			termContent.Set(tc[:len(tc)-2] + cursorChar)
 			break
 		case "Return":
+			execute(currentCommand)
 			currentCommand = ""
 			//todo: execute command
 			err := termContent.Set(tc[:len(tc)-1] + "\n" + cursorChar)
@@ -188,6 +231,9 @@ func main() {
 		case ".":
 			termContent.Set(tc[:len(tc)-1] + "." + cursorChar)
 			currentCommand += "."
+		case ";":
+			termContent.Set(tc[:len(tc)-1] + ";" + cursorChar)
+			currentCommand += ";"
 		case "-":
 			if shift {
 				termContent.Set(tc[:len(tc)-1] + "_" + cursorChar)

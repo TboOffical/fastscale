@@ -14,3 +14,4 @@ Setups are stored in /setups directory under root folder
     root of the directory there is a metadata file that contains basic information about all the setups
     Setups are stored in JSON format with the extension .setup
     A setup includes information about the infrastructure(like DB connection strings, etc)
+
